@@ -2,19 +2,37 @@ import React, {useEffect} from 'react';
 import {InputGroup} from 'react-bootstrap-v5';
 import Select from 'react-select';
 import {connect} from 'react-redux';
-import {fetchAllWarehouses} from '../../../store/action/warehouseAction';
+
+import { fetchWarehouse } from '../../../store/action/warehouseAction';
 import { getFormattedMessage } from '../../../shared/sharedMethod';
+import { fetchUser } from '../../../store/action/userAction';
 
 const WarehouseDropDown = (props) => {
-    const {setSelectedOption, selectedOption, warehouses, fetchAllWarehouses} = props;
+    const {setSelectedOption, selectedOption, warehouses, fetchWarehouse, fetchUser, users} = props;
+    const user = JSON.parse(localStorage.getItem('loginUserArray'));
+
 
     const warehouseOption = warehouses && warehouses.map((warehouse) => {
         return {value: warehouse.id, label: warehouse.attributes.name}
     });
 
     useEffect(() => {
-        fetchAllWarehouses();
+        fetchUser(user.id)
+
+
+        // if(users.length > 0){
+        //     console.log(users)
+        //     fetchWarehouse(user.warehouse_id);
+        // }
+
+    //    fetchAllWarehouses();
     },[]);
+
+    useEffect(() => {
+        if(users.length > 0){
+            fetchWarehouse(user.warehouse_id);
+        }
+    },[users]);
 
     const onChangeWarehouse = (obj) => {
         setSelectedOption(obj);
@@ -40,7 +58,7 @@ const WarehouseDropDown = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {warehouses} = state;
-    return {warehouses}
+    const {warehouses, users} = state;
+    return {warehouses, users}
 };
-export default connect(mapStateToProps, {fetchAllWarehouses})(WarehouseDropDown);
+export default connect(mapStateToProps, {fetchWarehouse, fetchUser})(WarehouseDropDown);

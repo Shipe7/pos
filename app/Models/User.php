@@ -87,6 +87,7 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
         'phone',
         'password',
         'language',
+        'warehouse_id'
     ];
 
     public static $rules = [
@@ -147,6 +148,7 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
             'role' => $this->roles,
             'created_at' => $this->created_at,
             'language' => $this->language,
+            'warehouse' => $this->warehouse
         ];
 
         return $fields;
@@ -162,5 +164,10 @@ class User extends Authenticatable implements HasMedia, JsonResourceful, CanRese
     public function sales()
     {
         return $this->hasMany(Sale::class);
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class);
     }
 }

@@ -120,4 +120,8 @@ class Warehouse extends BaseModel
     {
         return $this->hasMany(Purchase::class, 'warehouse_id', 'id');
     }
+
+    public function users() : HasMany {
+        return $this->hasMany(User::class);
+    }
 }

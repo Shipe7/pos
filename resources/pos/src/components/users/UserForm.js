@@ -10,10 +10,11 @@ import user from '../../assets/images/avatar.png';
 import ModelFooter from '../../shared/components/modelFooter';
 import ReactSelect from "../../shared/select/reactSelect";
 import {fetchAllRoles} from "../../store/action/roleAction";
+import { fetchAllWarehouses } from '../../store/action/warehouseAction';
 
 
 const UserForm = (props) => {
-    const {addUserData, id, singleUser, isEdit, isCreate, fetchAllRoles, roles} = props;
+    const {addUserData, id, singleUser, isEdit, isCreate, fetchAllRoles, roles, warehouses} = props;
     const Dispatch = useDispatch()
     const navigate = useNavigate();
 
@@ -25,6 +26,7 @@ const UserForm = (props) => {
         password: '',
         confirm_password: '',
         role_id: singleUser ? singleUser[0].role_id : '',
+        warehouse_id: singleUser ? singleUser[0].warehouse_id : '',
         image: singleUser ? singleUser[0].image : '',
     });
     const [errors, setErrors] = useState({
@@ -35,6 +37,7 @@ const UserForm = (props) => {
         password: '',
         confirm_password: '',
         role_id: '',
+        warehouse_id: ''
     });
 
     const avatarName = getAvatarName(singleUser && singleUser[0].image === '' && singleUser[0].first_name && singleUser[0].last_name && singleUser[0].first_name + ' ' + singleUser[0].last_name)
@@ -51,7 +54,11 @@ const UserForm = (props) => {
         label: singleUser[0].role_id.label[0], value: singleUser[0].role_id.value[0]
     }]) : null);
 
+    const  [selectedWarehouse] = useState(singleUser && singleUser[0] ? ([{
+        label: singleUser[0].warehouse_id.label[0], value: singleUser[0].warehouse_id.value[0]
+    }]) : null);
     useEffect(() => {
+        Dispatch(fetchAllWarehouses())
         fetchAllRoles()
         setImagePreviewUrl(singleUser ? singleUser[0].image && singleUser[0].image : user);
     }, []);
@@ -107,6 +114,12 @@ const UserForm = (props) => {
         }
     };
 
+    const onWarehouseChange = ( obj ) => {
+        setUserValue( inputs => ( { ...inputs, warehouse_id: obj } ) )
+        setErrors( '' )
+    };
+
+
     const prepareFormData = (data) => {
         const formData = new FormData();
         formData.append('first_name', data.first_name);
@@ -119,8 +132,10 @@ const UserForm = (props) => {
         }
         if (data.role_id.value) {
             formData.append('role_id', data.role_id.value);
+            formData.append('warehouse_id', data.warehouse_id.value);
         } else {
             formData.append('role_id', data.role_id);
+            formData.append('warehouse_id', data.warehouse_id);
         }
         if (selectImg) {
             formData.append('image', data.image);
@@ -236,6 +251,15 @@ const UserForm = (props) => {
                             <ReactSelect title={getFormattedMessage("user.input.role.label")} placeholder={placeholderText("user.input.role.placeholder.label")} defaultValue={selectedRole}
                                          data={roles} onChange={onRolesChange} errors={errors['role_id']}/>
                         </div>
+                        <div className='col-md-6'>
+
+                        <ReactSelect data={warehouses} onChange={onWarehouseChange}
+                                                defaultValue={selectedWarehouse}
+                                                // isWarehouseDisable={true}
+                                                title={getFormattedMessage( 'warehouse.title' )}
+                                                errors={errors[ 'warehouse_id' ]}
+                                                placeholder={placeholderText( 'purchase.select.warehouse.placeholder.label' )} />
+                        </div>
                         <ModelFooter onEditRecord={singleUser} onSubmit={onSubmit} editDisabled={disabled}
                                      link='/app/users' addDisabled={!userValue.first_name}/>
                     </div>
@@ -246,9 +270,9 @@ const UserForm = (props) => {
 };
 
 const mapStateToProps = (state) => {
-    const {roles} = state;
-    return {roles}
+    const {roles, warehouses} = state;
+    return {roles, warehouses}
 };
 
-export default connect(mapStateToProps, {fetchAllRoles})(UserForm);
+export default connect(mapStateToProps, {fetchAllRoles, fetchAllWarehouses})(UserForm);
 
