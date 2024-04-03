@@ -116,6 +116,7 @@ Route::middleware('auth:sanctum')->group(function () {
         [ProductAPIController::class, 'productImageDelete'])->name('products-image-delete');
 
     Route::get('products', [ProductAPIController::class, 'index']);
+    Route::get('search', [ProductAPIController::class, 'search']);
     Route::get('get-all-products', [ProductAPIController::class, 'getAllProducts']);
 
     //    Route::middleware('permission:manage_transfers')->group(function () {

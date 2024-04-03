@@ -31,6 +31,21 @@ class ProductAPIController extends AppBaseController
         $this->productRepository = $productRepository;
     }
 
+    public function search(Request $request)
+    {
+        // Validate the search query
+        $request->validate([
+            'query' => 'required|string|max:255',
+        ]);
+
+        // Perform the search
+        $query = $request->input('query');
+        $products = Product::where('name', 'like', "%$query%")->get();
+
+        // Return the search results
+        return response()->json(['data' => $products], 200);
+    }
+
     public function index(Request $request): ProductCollection
     {
         $perPage = getPageSize($request);
