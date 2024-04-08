@@ -190,7 +190,7 @@ const ProductSearchbar = (props) => {
                 }
             }
         } else {
-            setSearchString("");
+            //setSearchString("");
         }
     };
 
